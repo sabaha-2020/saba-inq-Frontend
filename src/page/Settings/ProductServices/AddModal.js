@@ -131,46 +131,7 @@ function AddModal() {
               ) : null}
             </Form.Group>
 
-          {/*  <Form.Group className="mb-3" controlId="isActive">
-                 <Form.Label style={{ fontSize: '14px' }}>isActive</Form.Label>
-                      <div>
-                  <Form.Check
-                     inline
-                    type="checkbox"
-                    label="True"
-                    name="isActive"
-                    checked={formik.values.isActive}
-                    onChange={() => {
-                      formik.setFieldValue('isActive', true);
-                    }}
-                    onBlur={formik.handleBlur}
-                      />
-                <Form.Check
-                    inline
-                  type="checkbox"
-                  label="False"
-                  name="isActive"
-                  onChange={() => {
-                  formik.setFieldValue('isActive', false);
-                  }}
-                  onBlur={formik.handleBlur}
-                  />
-                </div>
-              {formik.errors.isActive && formik.touched.isActive ? (
-               <p
-                  style={{
-                 fontSize: '10px',
-                  color: 'red',
-                  marginTop: '1px',
-                  marginLeft: '2%',
-                   }}
-                className="form-error"
-                 >
-              {formik.errors.isActive}
-              </p>
-             ) : null}
-                  </Form.Group>  */}
-             
+     
           </Form>
         </Modal.Body>
         <Modal.Footer>

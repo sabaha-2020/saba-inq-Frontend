@@ -8,7 +8,7 @@ import Button from 'react-bootstrap/Button';
 import '../Settings/style/table.css';
 import { ModalHeader} from 'react-bootstrap';
 import AddModal from './AddModal'
-import Tabs from './Tabs';
+
 
 // Import necessary FontAwesome components
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -32,6 +32,9 @@ function Table() {
   const [selectedDatas, setSelectedDatas] = useState(null);
   const [deleteModal,setDeleteModal] =useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  const [leadQuality, setLeadQuality] = useState(['High', 'Medium', 'Low']);
+ 
+
 
   const handleClose = () => {
     setShowEditModal(false);
@@ -64,10 +67,12 @@ function Table() {
       console.error('Error updating data:', error);
     }
   };
-  const handleEdit = (row) => {
-    setSelectedDatas(row);
-    setShowEditModal(true);
-  };
+
+
+    const handleEdit = (row) => {
+      setSelectedDatas(row);
+      setShowEditModal(true);
+    };
 
   const handleViewDetails = (row) => {
     setSelectedDatas(row);
@@ -176,8 +181,8 @@ const totalCount = filteredDatas ? filteredDatas.length : 0;
         subHeader
         subHeaderComponent={
           <div className='table-top'>
-            {/*  <div ><AddModal getDatas={getDatas}/></div>*/}
-          <div ><Tabs getDatas={getDatas}/></div>
+              <div ><AddModal getDatas={getDatas}/></div>
+         {/* <div ><Tabs getDatas={getDatas}/></div>*/}
               <div style={{display:'flex',alignItems:'center',width: '36%', justifyContent:'space-between'}}>
             <div>
             <div className="search-input-container">
@@ -203,7 +208,9 @@ const totalCount = filteredDatas ? filteredDatas.length : 0;
       </div>
 
       {/* Modal for Editing */}
-      <EditModal showModal={showEditModal} handleClose={handleClose} selectedDatas={selectedDatas} handleUpdate={handleUpdate} />
+         <EditModal showModal={showEditModal} handleClose={handleClose} selectedDatas={selectedDatas} 
+       handleUpdate={handleUpdate} leadQuality={leadQuality} 
+     /> 
 
       {/* Modal for Viewing Details */}
       <ViewModal showModal={showViewModal} handleClose={handleClose} selectedDatas={selectedDatas} />

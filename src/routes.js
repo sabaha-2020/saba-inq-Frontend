@@ -3,6 +3,12 @@ import React from 'react'
 /* eslint-disable */
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
+
+const AdminDashboard = React.lazy(() => import('./views/dashboard/AdminDashboard'))
+
+const VendorDashboard = React.lazy(() => import('./views/dashboard/VendorDashboard'))
+
+
 const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
 const Typography = React.lazy(() => import('./views/theme/typography/Typography'))
 
@@ -59,11 +65,19 @@ const EnquiryManagement = React.lazy(() => import('./page/EnquiryMangement/Index
 const Licensee = React.lazy(() => import('./page/Licensee/index'))
 const MyTeam = React.lazy(() => import('./page/MyTeam/index'))
 const SupportEnquiry = React.lazy(() => import('./page/SupportEnquiry/Index'));
+const Logout = React.lazy(() => import('./page/Logout/Logout'));
+const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'));
 
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
-  { path: '/dashboard', name: 'Dashboard', element: Dashboard },
+  
+
+  { path: '/admindashboard', name: 'AdminDashboard', element: AdminDashboard },
+  { path: '/licenseedashboard', name: 'Dashboard', element: Dashboard },
+{ path: '/vendordashboard', name: 'VendorDashboard', element: VendorDashboard }, 
+ 
+ {/*} { path: '/dashboard', name: 'Dashboard', element: Dashboard },*/},
   { path: '/theme', name: 'Theme', element: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', element: Colors },
   { path: '/theme/typography', name: 'Typography', element: Typography },
@@ -131,12 +145,12 @@ const routes = [
   { path: '/MyTeam', name: 'My Team', element: MyTeam, exact: true },
   { path: '/SupportEnquiry', name: 'SupportEnquiry', element: SupportEnquiry, exact: true },
 
-  { path: '/Settings', name: 'Settings', element: EnquirySource, exact: true },
+  {  path: '/Settings', name: 'Settings', element: EnquirySource, exact: true },
   { path: '/Settings/EnquirySource', name: 'EnquirySource', element: EnquirySource },
   {
     path: '/Settings/EnquirySource',
     name: ' EnquirySource',
-    element: EnquirySource,
+   element: EnquirySource,
   },
   { path: '/Settings', name: 'Settings', element: EnquiryMode, exact: true },
   { path: '/Settings/EnquiryMode', name: 'EnquiryMode', element: EnquiryMode },
@@ -170,8 +184,13 @@ const routes = [
     path: '/Settings/ProductServices',
     name: 'ProductServices ',
     element: ProductServices,
-  }
+  },
 
+  {
+    path: '/',
+    name: 'Logout',
+    element: Logout,
+  }
 
 
 ]

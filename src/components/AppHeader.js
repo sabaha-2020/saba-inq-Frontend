@@ -1,6 +1,7 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
+import { useAuth } from 'src/Context/Auth'
 import {
   CContainer,
   CHeader,
@@ -22,6 +23,23 @@ const AppHeader = () => {
   const dispatch = useDispatch()
   const sidebarShow = useSelector((state) => state.nav.sidebarShow)
 
+  const [auth] =useAuth()
+  
+  const renderdashboard = () => {
+    switch (auth?.user?.userType) {
+  
+      case 'admin':
+        return '/admindashboard';
+      case 'vendor':
+        return '/vendordashboard';
+      case 'licensee':
+        return '/licenseedashboard';
+      default:
+        return '/licenseedashboard';
+    }
+  };
+
+
   return (
     <CHeader style={{boxShadow:'0 0 4px 4px rgba(0,0,0,0.08)'}} position="sticky" className="">
       <CContainer fluid>
@@ -36,7 +54,7 @@ const AppHeader = () => {
         </CHeaderBrand>
         <CHeaderNav   className="d-none d-md-flex me-auto">
           <CNavItem>
-            <CNavLink to="/dashboard" component={NavLink}>
+            <CNavLink to={renderdashboard()}  component={NavLink}>
               Dashboard
             </CNavLink>
           </CNavItem>

@@ -1,0 +1,45 @@
+section{
+  height: 13vh;
+}
+
+
+.navbar {
+ /*   background-color: var( --black ) !important; */
+    color: black; 
+    background-color: white !important;
+
+    font-weight: bold !important;
+  }
+  
+  .nav-link {
+  /*  color: white !important; */
+    margin-right: 20px;
+ 
+  }
+
+ .logo{
+  margin: 20px;
+ }
+
+  .logo1{
+    font-size: 30px;
+ 
+  }
+  .logo2{
+    font-size: 18px;
+  }
+  .button-login {
+
+    background-color:#007BFF;
+    border: 1px solid #007BFF; 
+    color: white; 
+    text-decoration: none; 
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .button-login :hover{
+   
+    color: #007BFF;
+    text-decoration: none !important; 
+    transition: background-color 0.3s, color 0.3s;
+  }
