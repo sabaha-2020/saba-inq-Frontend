@@ -8,21 +8,33 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import '../style/edit.css';
 import { useEffect } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { Col, Row } from 'react-bootstrap';
 
 function EditModal({ showModal, handleClose, selectedDatas, handleUpdate }) {
+  // Formik form configuration
+  const nameSchema = Yup.string().required('Name is required');
+    const descpSchema = Yup.string().required('Description is required');
+    const statusSchema = Yup.string().required('Status is required');
+    // Combine the field validation schemas using Yup.object().shape
+    const validationSchema = Yup.object().shape({
+      name: Yup.lazy((value) => (value && value.trim() !== '' ? nameSchema : Yup.string())),
+      descp: Yup.lazy((value) => (value && value.trim() !== '' ? descpSchema : Yup.string())),
+      status: Yup.lazy((value) => (value && value.trim() !== '' ? statusSchema : Yup.string())),
+  
+     
+    });
+  
   // Formik form configuration
   const formik = useFormik({
     initialValues: {
       name: selectedDatas?.name || '',
       descp: selectedDatas?.descp || '',
-      isActive: selectedDatas?.isActive || false,
+    
 
     },
-    validationSchema: Yup.object({
-        name: Yup.string().required('Name is required'),
-        descp: Yup.string().required('Description is required'),
-        isActive: Yup.boolean().required('isActive is required'),
-    }),
+    validationSchema: validationSchema,
     onSubmit: (values) => {
       handleUpdate(selectedDatas?._id, values);
       handleClose();
@@ -39,26 +51,25 @@ function EditModal({ showModal, handleClose, selectedDatas, handleUpdate }) {
     formik.setValues({
       name: selectedDatas?.name || '',
       descp: selectedDatas?.descp || '',
-      isActive: selectedDatas?.isActive || false,
-     
+      status: selectedDatas?.status || '',
     });
   }, [selectedDatas]);
-  
-
 
   return (
+    <>
+    <ToastContainer autoClose={1000}/>
     <Modal show={showModal} onHide={handleModalHide} backdrop="static" centered>
       <Modal.Header closeButton>
         <Modal.Title>Edit Support Type</Modal.Title>
       </Modal.Header>
       <Modal.Body>
       <Form onSubmit={formik.handleSubmit}>
-          
+      
           <Form.Group className="mb-3" controlId="name">
-              <Form.Label style={{ fontSize: '14px' }}>Name</Form.Label>
+              <Form.Label style={{ fontSize: '14px' }}>Support Type</Form.Label>
               <Form.Control
                 type="text"
-                placeholder="Enter Name"
+                placeholder="Support Type"
                 name="name"
                 value={formik.values.name}
                 onChange={formik.handleChange}
@@ -68,6 +79,8 @@ function EditModal({ showModal, handleClose, selectedDatas, handleUpdate }) {
                 <div className="error" style={{color:'red'}}>{formik.errors.name}</div>
               ) : null}
             </Form.Group>
+          
+          
             <Form.Group className="mb-3" controlId="descp">
               <Form.Label style={{ fontSize: '14px' }}>Description</Form.Label>
               <Form.Control
@@ -84,38 +97,23 @@ function EditModal({ showModal, handleClose, selectedDatas, handleUpdate }) {
               ) : null}
             </Form.Group>
 
-
-            <Form.Group className="mb-3" controlId="isActive">
-              <Form.Label style={{ fontSize: '14px' }}>Active Services</Form.Label>
-              <div>
-                <Form.Check
-                  type="switch"
-                  // label="Active"
-                  id="isActiveSwitch"
-                  name="isActive"
-                  checked={formik.values.isActive}
-                  onChange={() => {
-                    formik.setFieldValue('isActive', !formik.values.isActive);
-                  }}
-                  onBlur={formik.handleBlur}
-                />
-              </div>
-              {formik.errors.isActive && formik.touched.isActive ? (
-                <p
-                  style={{
-                    fontSize: '10px',
-                    color: 'red',
-                    marginTop: '1px',
-                    marginLeft: '2%',
-                  }}
-                  className="form-error"
-                >
-                  {formik.errors.isActive}
-                </p>
+            <Form.Group className="mb-3" controlId="status">
+              <Form.Label style={{ fontSize: '14px' }}>Status</Form.Label>
+              <Form.Control
+             
+                type="text"
+                placeholder=" status"
+                name="status"
+                value={formik.values.status}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+              />
+              {formik.touched.status && formik.errors.status ? (
+                <div className="error" style={{color:'red'}}>{formik.errors.status}</div>
               ) : null}
             </Form.Group>
       </Form>
-  
+
       </Modal.Body>
       <Modal.Footer>
           <Button style={{ background: 'none', color: '#5bb6ea', border: '1px solid #5bb6ea' }} onClick={handleClose}>
@@ -127,6 +125,7 @@ function EditModal({ showModal, handleClose, selectedDatas, handleUpdate }) {
         </Modal.Footer>
 
     </Modal>
+    </>
   );
 }
 

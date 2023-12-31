@@ -1,30 +1,35 @@
 // Table.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect ,useCallback} from 'react';
 import Datatable from 'react-data-table-component';
 import axios from 'axios';
 import EditModal from './EditModal';
 import ViewModal from './ViewModal';
 import Button from 'react-bootstrap/Button';
-import '../style/table.css'
-import { ModalHeader } from 'react-bootstrap';
-import AddModal from './AddModal'
+import '../style/table.css';
+import AddModal from './AddModal';
 // Import necessary FontAwesome components
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faEye, faTrash ,faFilter} from '@fortawesome/free-solid-svg-icons';
-import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
-import { faUser } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faEye, faTrash ,faFilter,faSearch} from '@fortawesome/free-solid-svg-icons';
 import DeleteModal from './DeleteModal';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import Filter from './Filter';
+import { useSearch } from 'src/Context/Search';
+import useDebounce from 'src/Context/Debounce';
 
 function Table() {
   const [datas, setDatas] = useState([]);
-  const [search, setSearch] = useState("");
   const [filteredDatas, setFilteredDatas] = useState([]);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
   const [selectedDatas, setSelectedDatas] = useState(null);
   const [deleteModal,setDeleteModal] =useState(false);
   const [selectedId, setSelectedId] = useState(null);
+  const [values, setValues] = useSearch();
+  const debouncedKeyword = useDebounce(values.keyword, 300); 
+  const [filterValue, setFilterValue] = useState(''); 
+  const [query, setQuery] = useState('');    //filter
+
 
   const handleClose = () => {
     setShowEditModal(false);
@@ -42,14 +47,16 @@ function Table() {
     }
   };
 
-
   const handleUpdate = async (orgId, updatedData) => {
     try {
       const response = await axios.put(`http://localhost:3000/enquiryType/${orgId}`, updatedData);
       console.log('Update response:', response.data);
       getDatas(); // Refresh the data after update
+      toast.success('Data updated successfully!',{ autoClose: 1000 } );
+
     } catch (error) {
       console.error('Error updating data:', error);
+      toast.error('Error updating data Please try again.' ,{ autoClose: 1000 });
     }
   };
   const handleEdit = (row) => {
@@ -62,7 +69,6 @@ function Table() {
     setShowViewModal(true);
   };
 
-
 //DELETE MODAL
 
 const deleteModalClose = () => {
@@ -73,7 +79,6 @@ const deleteModalShow = () => {
   setDeleteModal(true);
 };
 
-
 const handleClickDelete = (row) => {
   setSelectedId(row._id);
   deleteModalShow();
@@ -83,13 +88,17 @@ const handleClickDelete = (row) => {
   const columns = [
    
     {
-      name: "NAME",
-      selector: (row) => row.name,
+      name: "ENQUIRY TYPE",
+      selector: (row) => <div style={{ textTransform: 'capitalize' }}>{row.name}</div>,
       sortable: true,
     },
     {
       name: "DESCRIPTION",
-      selector: (row) => row.descp,
+      selector: (row) => <div style={{ textTransform: 'capitalize' }}>{row.descp}</div>,
+    },
+    {
+      name: "STATUS",
+      selector: (row) => <div style={{ textTransform: 'capitalize' }}>{row.status}</div>,
     },
     {
       name: "ACTIONS",
@@ -111,6 +120,11 @@ const handleClickDelete = (row) => {
     },
   ];
 
+  const handleInputChange = (e) => {
+    const keyword = e.target.value;
+    setValues({ ...values, keyword });
+  };
+
   useEffect(() => {
     getDatas();
   }, []);
@@ -121,14 +135,38 @@ const handleClickDelete = (row) => {
       return;
     }
 
-    const result = datas.filter((item) => {
-      return item.name.toLowerCase().includes(search.toLowerCase());
-    });
-    setFilteredDatas(result);
-  }, [search, datas]);
+
+  const result = datas.filter((item) => {
+   
+    const statusMatch = item.status.toLowerCase().includes(filterValue.toLowerCase());
+   
+   return !item.isDeleted && (filterValue === '' || statusMatch);
+  });
+  setFilteredDatas(result);
+}, [datas,filterValue]);
+
+
+
+  // Debounce effect for keyword
+
+ useEffect(() => {
+  if (debouncedKeyword !== null) {
+    search(debouncedKeyword);
+  }
+}, [debouncedKeyword]);
+  
+const search = async (keyword) => {
+  try {
+    const { data } = await axios.get(`http://localhost:3000/enquiryType/key/search?keyword=${keyword}`);
+    setFilteredDatas(data.results);
+  } catch (error) {
+    console.error('Error in search:', error);
+  }
+};
 
   return (
     <>
+    <ToastContainer/>
     <div className='table-div'>
       <Datatable className='table-data-div'
         title='Enquiry Type'
@@ -145,23 +183,30 @@ const handleClickDelete = (row) => {
         subHeader
         subHeaderComponent={
           <div className='table-top'>
-              <div ><AddModal/></div>
-              <div style={{display:'flex',alignItems:'center',width: '36%', justifyContent:'space-between'}}>
-            <div>
-              <input
-                type='text'
-                placeholder='Search'
-                className='w-35 form-control'
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-              />
+          <div className='d-flex justify-content-start'><AddModal  getDatas={getDatas} /></div>
+
+          <div className="search-input-container">
+          <FontAwesomeIcon icon={faSearch} className="search-icon"  type='submit'/>
+          <input
+            type='text'
+            placeholder='Search'
+            className='w-35 form-control'
+            value={values.keyword}
+            onChange={handleInputChange}
+          />
+        </div>
+
+        <div className='d-flex justify-content-end  end-col' >
+     <div className='border-end'>
+        <Filter onFilter={(newQuery, newFilterValue) => { setQuery(newQuery); setFilterValue(newFilterValue); }} />
+
+        <div className='count-div'>
+              <FontAwesomeIcon icon={faFilter} style={{ marginRight: '5px' }} />
+              <span style={{ whiteSpace: 'nowrap' }}>{' '}Results: {totalCount}</span>
             </div>
-            <div className='count-div'>
-                  <FontAwesomeIcon icon={faFilter} style={{ marginRight: '5px' }} />
-                  <span>{' '}Results: {totalCount}</span>
-                </div>
-            </div>
-          </div>
+</div></div>
+        </div>
+     
         }
         subHeaderAlign='right'
       />

@@ -1,6 +1,7 @@
 import React, { Component, Suspense } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './scss/style.scss'
+import { SearchProvider } from './Context/Search'
 
 const loading = (
   <div className="pt-3 text-center">
@@ -21,6 +22,8 @@ const Page500 = React.lazy(() => import('./views/pages/page500/Page500'))
 class App extends Component {
   render() {
     return (
+      <>
+      <SearchProvider>
       <BrowserRouter>
         <Suspense fallback={loading}>
           <Routes>
@@ -32,6 +35,8 @@ class App extends Component {
           </Routes>
         </Suspense>
       </BrowserRouter>
+      </SearchProvider>
+      </>
     )
   }
 }

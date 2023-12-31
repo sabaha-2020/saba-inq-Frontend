@@ -1,4 +1,4 @@
-import React from 'react'
+import {React,useState,useEffect} from 'react'
 import {
   CRow,
   CCol,
@@ -14,6 +14,28 @@ import CIcon from '@coreui/icons-react'
 import { cilArrowBottom, cilArrowTop, cilOptions } from '@coreui/icons'
 
 const WidgetsDropdown = () => {
+
+// vendors count
+
+const [datas, setDatas] = useState([]);
+const [filteredDatas, setFilteredDatas] = useState([]);
+
+
+useEffect(() => {
+  const getDatas = async () => {
+    try {
+      const response = await axios.get('http://localhost:3000/enquiries/total/count');
+     // const filteredData = response.data.enquirySupport.filter((item) => !item.isDeleted);
+      setDatas(response.data.enquiry);
+      setFilteredDatas(response.data.enquiry);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  getDatas();
+}, []);
+
+
   return (
     <CRow>
       <CCol sm={6} lg={3}>
@@ -22,70 +44,25 @@ const WidgetsDropdown = () => {
           color="primary"
           value={
             <>
-              26K{' '}
+             Total Enqui <span className="fs-6 fw-normal"></span>
             
             </>
           }
-          title="Users"
+          
+          title={`Total Enquiry :${datas && datas ? datas.length : 0}`}
           action={
             <CDropdown alignment="end">
               <CDropdownToggle color="transparent" caret={false} className="p-0">
                 <CIcon icon={cilOptions} className="text-high-emphasis-inverse" />
               </CDropdownToggle>
-              <CDropdownMenu>
-                <CDropdownItem>Action</CDropdownItem>
-                <CDropdownItem>Another action</CDropdownItem>
-                <CDropdownItem>Something else here...</CDropdownItem>
-                <CDropdownItem disabled>Disabled action</CDropdownItem>
-              </CDropdownMenu>
+            
             </CDropdown>
           }
           chart={
             <CChartLine
               className="mt-3 mx-3"
-              style={{ height: '70px' }}
+              style={{ height: '40px' }}
              
-              options={{
-                plugins: {
-                  legend: {
-                    display: false,
-                  },
-                },
-                maintainAspectRatio: false,
-                scales: {
-                  x: {
-                    grid: {
-                      display: false,
-                      drawBorder: false,
-                    },
-                    ticks: {
-                      display: false,
-                    },
-                  },
-                  y: {
-                    min: 30,
-                    max: 89,
-                    display: false,
-                    grid: {
-                      display: false,
-                    },
-                    ticks: {
-                      display: false,
-                    },
-                  },
-                },
-                elements: {
-                  line: {
-                    borderWidth: 1,
-                    tension: 0.4,
-                  },
-                  point: {
-                    radius: 4,
-                    hitRadius: 10,
-                    hoverRadius: 4,
-                  },
-                },
-              }}
             />
           }
         />
@@ -96,7 +73,7 @@ const WidgetsDropdown = () => {
           color="info"
           value={
             <>
-              $6.200{' '}
+              Enquiries <span className="fs-6 fw-normal"></span>
              
             </>
           }
